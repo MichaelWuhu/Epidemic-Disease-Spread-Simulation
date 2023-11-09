@@ -1,4 +1,5 @@
 import java.util.Scanner;
+import java.util.Random;
 
 public class DiseaseSpreadSimulation {
     public static void main(String[] args) {
@@ -9,6 +10,7 @@ public class DiseaseSpreadSimulation {
         // the cumulative probability that and individual can get infected should not be more than 1
         // Recover rate (β) => You should accept a value 0 ≤ β ≤ 1.
         Scanner sc = new Scanner(System.in);
+        Random rand = new Random();
 
         // taking in 'number of individuals' input
         System.out.println("Enter the number of individuals (this should be a perfect square): ");
@@ -42,6 +44,137 @@ public class DiseaseSpreadSimulation {
             β = sc.nextDouble();
         }
 
+        int size = (int) Math.sqrt(N); //Size of the square array.
+
+        char[][] epidemicGrid = new char[size][size];//Creates char grid with 'Math.sqrt(N)' rows and 'Math.sqrt(N)' columns
+
+        for (int i = 0; i < size; i++) { // Instantiates every element in the epidemicGrid with 'S' 
+            for (int j = 0; j < size; j++) {
+                epidemicGrid[i][j] = 'S';
+            }
+        }
+
+        int randRow = rand.nextInt(size); //Chooses random number from 0 to Math.sqrt(N)
+        int randCol = rand.nextInt(size); //Chooses random number from 0 to Math.sqrt(N)
+
+        epidemicGrid[randRow][randCol] = 'I'; // instantiates the randomly chosen row and randomly chosen column with I, A.K.A. 'Patient Zero'
+
+        for (int i = 0; i < size; i++) { // Prints out epidemic grid prior to any infections. This is only used for output testing. 
+            for (int j = 0; j < size; j++) {
+                System.out.print(epidemicGrid[i][j] + " ");
+            }
+            System.out.println();
+        }
         
+        //!!!THIS WILL BE THE INITIAL TIMESTEP (I don't know if this is necessary, so you can *delete it if you want.*)!!!
+        // This essentially just checks whether Patient Zero will initially infect other people or Recover, feel free to delete if you want.
+        if (randRow == 0) {
+            if (randCol == 0) { //Checks to see if patient zero is in upper left corner
+                if (rand.nextDouble(1) < α) {
+                    epidemicGrid[0][1] = 'I';
+                }
+                if (rand.nextDouble(1) < α) {
+                    epidemicGrid[1][0] = 'I';
+                }
+            }
+            else if (randCol == size-1) { // Checks to see if patient zero is in upper right corner
+                if (rand.nextDouble(1) < α) {
+                    epidemicGrid[0][size-2] = 'I';
+                }
+                if (rand.nextDouble(1) < α) {
+                    epidemicGrid[1][size-1] = 'I';
+                }
+            }
+            else {
+                if (rand.nextDouble(1) < α) {
+                    epidemicGrid[0][randCol-1] = 'I';
+                }
+                if (rand.nextDouble(1) < α) {
+                    epidemicGrid[0][randCol+1] = 'I';
+                }
+                if (rand.nextDouble(1) < α) {
+                    epidemicGrid[1][randCol] = 'I'; 
+                }
+            }
+        }
+        else if (randRow == size-1) {
+            if (randCol == 0) {
+                if (rand.nextDouble(1) < α) {
+                    epidemicGrid[0][1] = 'I';
+                }
+                if (rand.nextDouble(1) < α) {
+                    epidemicGrid[1][0] = 'I';
+                }
+            }
+            else if (randCol == size-1) {
+                if (rand.nextDouble(1) < α) {
+                    epidemicGrid[size-1][size-2] = 'I';
+                }
+                if (rand.nextDouble(1) < α) {
+                    epidemicGrid[size-2][size-1] = 'I';
+                }
+            }
+            else {
+                if (rand.nextDouble(1) < α) {
+                    epidemicGrid[size-1][randCol-1] = 'I';
+                }
+                if (rand.nextDouble(1) < α) {
+                    epidemicGrid[size-1][randCol+1] = 'I';
+                }
+                if (rand.nextDouble(1) < α) {
+                    epidemicGrid[size-2][randCol] = 'I'; 
+                }
+            }
+        }
+        else if (randCol == 0) {
+            if (rand.nextDouble(1) < α) {
+                    epidemicGrid[randRow-1][0] = 'I';
+                }
+            if (rand.nextDouble(1) < α) {
+                    epidemicGrid[randRow+1][0] = 'I';
+                }
+            if (rand.nextDouble(1) < α) {
+                    epidemicGrid[randRow][1] = 'I'; 
+                }
+        }
+        else if (randCol == size-1) {
+            if (rand.nextDouble(1) < α) {
+                    epidemicGrid[randRow-1][size-1] = 'I';
+                }
+            if (rand.nextDouble(1) < α) {
+                    epidemicGrid[randRow+1][size-1] = 'I';
+                }
+            if (rand.nextDouble(1) < α) {
+                    epidemicGrid[randRow][size-2] = 'I'; 
+                }
+        }
+        else {
+            if (rand.nextDouble(1) < α) {
+                    epidemicGrid[randRow-1][randCol] = 'I';
+                }
+            if (rand.nextDouble(1) < α) {
+                    epidemicGrid[randRow+1][randCol] = 'I';
+                }
+            if (rand.nextDouble(1) < α) {
+                    epidemicGrid[randRow][randCol-1] = 'I'; 
+                }
+            if (rand.nextDouble(1) < α) {
+                    epidemicGrid[randRow][randCol+1] = 'I'; 
+                }
+        }
+
+        if (rand.nextDouble(1) < β) {
+            epidemicGrid[randRow][randCol] = 'R';
+        }
+        System.out.println("\n\n\n");
+
+        System.out.println("Patient Zero is (" + randRow + ", " + randCol + ").");
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                System.out.print(epidemicGrid[i][j] + " ");
+            }
+            System.out.println();
+        }
+
     }
 }
