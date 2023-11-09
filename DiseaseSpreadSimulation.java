@@ -13,7 +13,7 @@ public class DiseaseSpreadSimulation {
         // taking in 'number of individuals' input
         System.out.println("Enter the number of individuals (this should be a perfect square): ");
         int N = sc.nextInt(); // N = number of individuals
-        while (!(Math.sqrt(N) % 1 == 0)) {
+        while (N <=0 ||     !(Math.sqrt(N) % 1 == 0)) {
             System.out.println("Please input a perfect square: ");
             N = sc.nextInt();
         }
