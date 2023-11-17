@@ -59,12 +59,14 @@ public class DiseaseSpreadSimulation {
 
         epidemicGrid[randRow][randCol] = 'I'; // instantiates the randomly chosen row and randomly chosen column with I, A.K.A. 'Patient Zero'
 
+        /*
         for (int i = 0; i < size; i++) { // Prints out epidemic grid prior to any infections. This is only used for output testing. 
             for (int j = 0; j < size; j++) {
                 System.out.print(epidemicGrid[i][j] + " ");
             }
             System.out.println();
         }
+        */
         
         //!!!THIS WILL BE THE INITIAL TIMESTEP (I don't know if this is necessary, so you can *delete it if you want.*)!!!
         // This essentially just checks whether Patient Zero will initially infect other people or Recover, feel free to delete if you want.
