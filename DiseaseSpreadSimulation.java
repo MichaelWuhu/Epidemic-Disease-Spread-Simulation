@@ -42,11 +42,6 @@ public class DiseaseSpreadSimulation {
             β = sc.nextDouble();
         }
 
-        for(int i = 0; i < T ; i++){
-            for (int j = 0; j < N ; j++){
-                
-            }
-        }
+        
     }
-
 }
