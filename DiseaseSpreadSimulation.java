@@ -1,7 +1,11 @@
+import java.io.File;
+import java.io.FileWriter;  
+import java.io.IOException;
 import java.util.Scanner;
 import java.util.Random;
 
 public class DiseaseSpreadSimulation {
+    
     public static void main(String[] args) {
         // inputs needed:
         // Number of individuals (N) => (*N NEEDS TO BE PERFECT SQUARE)
@@ -179,4 +183,44 @@ public class DiseaseSpreadSimulation {
         }
 
     }
+    
+    public static void outputGridInfo(char[][] grid, int timeStep) {	
+		// Names for the file path
+		String folderName = "Epidemic";
+		String directoryPath = "C:/";
+        String fileName = "TimeStep "+timeStep+".txt";
+        
+		// Create the folder
+		File directory = new File("C:/", folderName);
+		directory.mkdirs(); 
+        
+    	// Combine the directory path and file name to create the complete file path
+        String filePath = directoryPath + folderName +"/" + fileName;
+        try {
+            // Create a FileWriter object to write to the file
+            FileWriter writer = new FileWriter(filePath);
+            
+            // Write and print the current time step
+            writer.write("/////Step "  + timeStep + "/////");
+            System.out.println("/////Step "  + timeStep + "/////");
+            writer.write(System.lineSeparator());
+            
+            // Writes the array to the file and print to console
+            for (char[] row : grid) { 
+                for (char c : row) {
+                    writer.write(c+" ");
+                    System.out.print(c+" ");
+                }
+                // Add a newline after each row
+                System.out.println();
+                writer.write(System.lineSeparator());
+            }
+
+            // Close the FileWriter to release system resources
+            writer.close();
+        } catch (IOException e) {
+            // Handle IO exception
+            e.printStackTrace();
+        }
+    } 
 }
