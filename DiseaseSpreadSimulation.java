@@ -178,5 +178,44 @@ public class DiseaseSpreadSimulation {
             System.out.println();
         }
 
+        int numInfected = 0;
+        int numRecovered = 0;
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) { //nested for loop to iterate through each individual in the epidemicGrid
+                if (epidemicGrid[i][j] == 'R') {//check if the current individual is recovered.
+                    numRecovered++;
+                }
+
+                 if (epidemicGrid[i][j] == 'I') {//check if current individual is 'I'
+                    if (rand.nextDouble() < β) {
+                        epidemicGrid[i][j] = 'R'; //changes status to R for individual if both above statesments are true
+                        numRecovered++;
+                    } else {
+                        numInfected++;
+                    }
+
+                } else { //checking status of individuals at (row-1, col), (row+1, col), (row, col-1), (row, col+1) where applicable (row/col – 1 must be >= 0 and row/col + 1 must be < numRows/Cols)​​
+                    if (i - 1 >= 0 && epidemicGrid[i - 1][j] == 'I' && rand.nextDouble() < α) {
+                        epidemicGrid[i][j] = 'I';
+                        numInfected++;
+                    } else if (i + 1 < size && epidemicGrid[i + 1][j] == 'I' && rand.nextDouble() < α) {
+                        epidemicGrid[i][j] = 'I';
+                        numInfected++;
+                    } else if (j - 1 >= 0 && epidemicGrid[i][j - 1] == 'I' && rand.nextDouble() < α) {
+                        epidemicGrid[i][j] = 'I';
+                        numInfected++;
+                    } else if (j + 1 < size && epidemicGrid[i][j + 1] == 'I' && rand.nextDouble() < α) {
+                        epidemicGrid[i][j] = 'I';
+                        numInfected++;
+                    } 
+            }
+        }
+        System.out.println("Number of Infected Individuals: " + numInfected);
+        System.out.println("Number of Recovered Individuals: " + numRecovered);
+        System.out.println("Ratio of Infected Individuals/Total Individuals: " + (double) numInfected / N);
     }
+
+    }
+
+
 }
