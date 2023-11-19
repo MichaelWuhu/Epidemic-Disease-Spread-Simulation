@@ -182,73 +182,108 @@ public class DiseaseSpreadSimulation {
             System.out.println();
         }
 
-    }
-    
-    public static void outputGridInfo(char[][] grid, int timeStep) {	
-		
-		// Tracking Numbers
-	int numInfected = 0;
-	int numRecovered = 0;
-	int numSus = 0;
-	int total = 0;
-	// Names for the file path
-	String folderName = "Epidemic";
-	String directoryPath = "C:/";
-        String fileName = "TimeStep "+timeStep+".txt";
-        
-	// Create the folder
-	File directory = new File("C:/", folderName);
-	directory.mkdirs(); 
-        
-    	// Combine the directory path and file name to create the complete file path
-        String filePath = directoryPath + folderName +"/" + fileName;
-        try {
-            // Create a FileWriter object to write to the file
-            FileWriter writer = new FileWriter(filePath);
-            
-            // Write and print the current time step
-            writer.write("/////Step "  + timeStep + "/////");
-            System.out.println("/////Step "  + timeStep + "/////");
-            writer.write(System.lineSeparator());
-            
-            // Writes the array to the file and print to console
-            for (char[] row : grid) { 
-                for (char c : row) {
-                    writer.write(c+" ");
-                    System.out.print(c+" ");
-                    // Count the numbers
-                    switch (c) {
-                	case 'I':
-                		++numInfected;
-                		break;
-	                case 'R':
-	                	++numRecovered;
-	                	break;
-	                default:
-	                	++numSus;
-	                	break;
-                    }
+        int numInfected = 0;
+        int numRecovered = 0;
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) { //nested for loop to iterate through each individual in the epidemicGrid
+                if (epidemicGrid[i][j] == 'R') {//check if the current individual is recovered.
+                    numRecovered++;
                 }
-             // Add a newline after each row
-        	System.out.println();
-		writer.write(System.lineSeparator());
+
+                 if (epidemicGrid[i][j] == 'I') {//check if current individual is 'I'
+                    if (rand.nextDouble() < β) {
+                        epidemicGrid[i][j] = 'R'; //changes status to R for individual if both above statesments are true
+                        numRecovered++;
+                    } else {
+                        numInfected++;
+                    }
+
+                } else { //checking status of individuals at (row-1, col), (row+1, col), (row, col-1), (row, col+1) where applicable (row/col – 1 must be >= 0 and row/col + 1 must be < numRows/Cols)​​
+                    if (i - 1 >= 0 && epidemicGrid[i - 1][j] == 'I' && rand.nextDouble() < α) {
+                        epidemicGrid[i][j] = 'I';
+                        numInfected++;
+                    } else if (i + 1 < size && epidemicGrid[i + 1][j] == 'I' && rand.nextDouble() < α) {
+                        epidemicGrid[i][j] = 'I';
+                        numInfected++;
+                    } else if (j - 1 >= 0 && epidemicGrid[i][j - 1] == 'I' && rand.nextDouble() < α) {
+                        epidemicGrid[i][j] = 'I';
+                        numInfected++;
+                    } else if (j + 1 < size && epidemicGrid[i][j + 1] == 'I' && rand.nextDouble() < α) {
+                        epidemicGrid[i][j] = 'I';
+                        numInfected++;
+                    } 
             }
-            
-            total = numSus+numRecovered+numInfected;
-            
-            // Prints some values
-            System.out.println("Number Infected: " + numInfected);
-            System.out.println("Number Recovered: " + numRecovered);
-            System.out.println("Number Susceptible: " + numSus);
-            System.out.printf("Percent Infected: %,.2f%%\n", (100.0)*((double)numInfected/(double)total));
-            System.out.printf("Percent Recovered: %,.2f%%\n", (100.0)*((double)numRecovered/(double)total));
-            System.out.printf("Percent Susceptible: %,.2f%%\n", (100.0)*((double)numSus/(double)total));
-            
-            // Close the FileWriter to release system resources
-            writer.close();
-        } catch (IOException e) {
-            // Handle IO exception
-            e.printStackTrace();
         }
+        System.out.println("Number of Infected Individuals: " + numInfected);
+        System.out.println("Number of Recovered Individuals: " + numRecovered);
+        System.out.println("Ratio of Infected Individuals/Total Individuals: " + (double) numInfected / N);
+    }
+
+    }
+    public static void outputGridInfo(char[][] grid, int timeStep) {	
+    	// Tracking Numbers
+    	int numInfected = 0;
+    	int numRecovered = 0;
+    	int numSus = 0;
+    	int total = 0;
+    	// Names for the file path
+    	String folderName = "Epidemic";
+    	String directoryPath = "C:/";
+    	String fileName = "TimeStep "+timeStep+".txt";
+
+    	// Create the folder
+    	File directory = new File("C:/", folderName);
+    	directory.mkdirs(); 
+
+    	// Combine the directory path and file name to create the complete file path
+    	String filePath = directoryPath + folderName +"/" + fileName;
+        try {
+        	// Create a FileWriter object to write to the file
+          FileWriter writer = new FileWriter(filePath);
+
+          // Write and print the current time step
+          writer.write("/////Step "  + timeStep + "/////");
+          System.out.println("/////Step "  + timeStep + "/////");
+          writer.write(System.lineSeparator());
+
+          // Writes the array to the file and print to console
+          for (char[] row : grid) { 
+            for (char c : row) {
+              writer.write(c+" ");
+              System.out.print(c+" ");
+              // Count the numbers
+              switch (c) {
+                case 'I':
+                  ++numInfected;
+                  break;
+                case 'R':
+                  ++numRecovered;
+                  break;
+                default:
+                  ++numSus;
+                  break;
+              }
+            }
+            // Add a newline after each row
+            System.out.println();
+            writer.write(System.lineSeparator());
+          }
+
+          total = numSus+numRecovered+numInfected;
+
+          // Prints some values
+          System.out.println("Number Infected: " + numInfected);
+          System.out.println("Number Recovered: " + numRecovered);
+          System.out.println("Number Susceptible: " + numSus);
+          System.out.printf("Percent Infected: %,.2f%%\n", (100.0)*((double)numInfected/(double)total));
+          System.out.printf("Percent Recovered: %,.2f%%\n", (100.0)*((double)numRecovered/(double)total));
+          System.out.printf("Percent Susceptible: %,.2f%%\n", (100.0)*((double)numSus/(double)total));
+
+          // Close the FileWriter to release system resources
+          writer.close();
+      } catch (IOException e) {
+          // Handle IO exception
+        	e.printStackTrace();
+      }
     } 
 }
