@@ -185,14 +185,20 @@ public class DiseaseSpreadSimulation {
     }
     
     public static void outputGridInfo(char[][] grid, int timeStep) {	
-		// Names for the file path
-		String folderName = "Epidemic";
-		String directoryPath = "C:/";
+		
+		// Tracking Numbers
+	int numInfected = 0;
+	int numRecovered = 0;
+	int numSus = 0;
+	int total = 0;
+	// Names for the file path
+	String folderName = "Epidemic";
+	String directoryPath = "C:/";
         String fileName = "TimeStep "+timeStep+".txt";
         
-		// Create the folder
-		File directory = new File("C:/", folderName);
-		directory.mkdirs(); 
+	// Create the folder
+	File directory = new File("C:/", folderName);
+	directory.mkdirs(); 
         
     	// Combine the directory path and file name to create the complete file path
         String filePath = directoryPath + folderName +"/" + fileName;
@@ -210,12 +216,34 @@ public class DiseaseSpreadSimulation {
                 for (char c : row) {
                     writer.write(c+" ");
                     System.out.print(c+" ");
+                    // Count the numbers
+                    switch (c) {
+                	case 'I':
+                		++numInfected;
+                		break;
+	                case 'R':
+	                	++numRecovered;
+	                	break;
+	                default:
+	                	++numSus;
+	                	break;
+                    }
                 }
-                // Add a newline after each row
-                System.out.println();
-                writer.write(System.lineSeparator());
+             // Add a newline after each row
+        	System.out.println();
+		writer.write(System.lineSeparator());
             }
-
+            
+            total = numSus+numRecovered+numInfected;
+            
+            // Prints some values
+            System.out.println("Number Infected: " + numInfected);
+            System.out.println("Number Recovered: " + numRecovered);
+            System.out.println("Number Susceptible: " + numSus);
+            System.out.printf("Percent Infected: %,.2f%%\n", (100.0)*((double)numInfected/(double)total));
+            System.out.printf("Percent Recovered: %,.2f%%\n", (100.0)*((double)numRecovered/(double)total));
+            System.out.printf("Percent Susceptible: %,.2f%%\n", (100.0)*((double)numSus/(double)total));
+            
             // Close the FileWriter to release system resources
             writer.close();
         } catch (IOException e) {
