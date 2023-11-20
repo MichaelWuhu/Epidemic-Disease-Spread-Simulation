@@ -326,5 +326,27 @@ public class DiseaseSpreadSimulation {
 			return 'I';
 		}
 	}
-
+	public static char infectionProtocol(char[][] grid, int row, int col, double infRate) {
+		Random rand = new Random();
+		//Looking at the chars of the point's niehgbors
+		char above = (row > 0) ? grid[row - 1][col] : 'n'; // 'n' indicates no neighbor above
+        char below = (row < grid.length - 1) ? grid[row + 1][col] : 'n'; // 'n' indicates no neighbor below
+        char left = (col > 0) ? grid[row][col - 1] : 'n'; // 'n' indicates no neighbor to the left
+        char right = (col < grid[0].length - 1) ? grid[row][col + 1] : 'n'; // 'n' indicates no neighbor to the right
+        
+        //Seeing how many neighbors are infected
+        int count = 0;
+        count += (above == 'I') ? 1 : 0;
+        count += (below == 'I') ? 1 : 0;
+        count += (left == 'I') ? 1 : 0;
+        count += (right == 'I') ? 1 : 0;
+        
+        //testing if the given point will become infected
+		double k = rand.nextDouble();
+		if (infRate*count >= k) {
+			return 'I';
+		} else {
+			return 'S';
+		}
+   }
 }
