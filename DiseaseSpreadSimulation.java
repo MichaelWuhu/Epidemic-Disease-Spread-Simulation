@@ -1,11 +1,13 @@
 import java.io.File;
-import java.io.FileWriter;  
+import java.io.FileWriter;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
 import java.util.Random;
 
 public class DiseaseSpreadSimulation {
-    
+    static String folderName = "Epidemic";
+	static String directoryPath = "C:/";
     public static void main(String[] args) {
         // inputs needed:
         // Number of individuals (N) => (*N NEEDS TO BE PERFECT SQUARE)
@@ -14,7 +16,6 @@ public class DiseaseSpreadSimulation {
         // the cumulative probability that and individual can get infected should not be more than 1
         // Recover rate (β) => You should accept a value 0 ≤ β ≤ 1.
         Scanner sc = new Scanner(System.in);
-        Random rand = new Random();
 
         // taking in 'number of individuals' input
         System.out.println("Enter the number of individuals (this should be a perfect square): ");
@@ -220,6 +221,37 @@ public class DiseaseSpreadSimulation {
     }
 
     }
+    public static char[][] preGrid(char[][] grid, int timeStep) {
+		
+		//Defining FilePaths
+        String fileName = "TimeStep "+(timeStep-1)+".txt";
+        String filePath = directoryPath + folderName + "/" + fileName;
+        //Initialising scnaner and preGrid
+		Scanner scnr;
+		char[][] prevGrid = new char[grid.length][grid[0].length];
+		
+		try {
+			//Read previous step file
+			scnr = new Scanner(new File(filePath));
+			scnr.nextLine(); //skips the 'step' label
+			
+			//Fill in prevGrid with previous step
+			for (int i = 0; i < prevGrid.length; i++) {
+				String[] yes = scnr.nextLine().split(" ",0); //
+				String no = String.join("",yes);
+				char[] replace = no.toCharArray();
+	            for (int j = 0; j < prevGrid[i].length && j < replace.length; j++) {
+	            	prevGrid[i][j] = replace[j];
+	            }
+	        }	
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return prevGrid;
+	}
+    
+    
     public static void outputGridInfo(char[][] grid, int timeStep) {	
     	// Tracking Numbers
     	int numInfected = 0;
@@ -227,8 +259,6 @@ public class DiseaseSpreadSimulation {
     	int numSus = 0;
     	int total = 0;
     	// Names for the file path
-    	String folderName = "Epidemic";
-    	String directoryPath = "C:/";
     	String fileName = "TimeStep "+timeStep+".txt";
 
     	// Create the folder
@@ -269,7 +299,7 @@ public class DiseaseSpreadSimulation {
             writer.write(System.lineSeparator());
           }
 
-          total = numSus+numRecovered+numInfected;
+          total = numSus + numRecovered + numInfected;
 
           // Prints some values
           System.out.println("Number Infected: " + numInfected);
@@ -285,5 +315,38 @@ public class DiseaseSpreadSimulation {
           // Handle IO exception
         	e.printStackTrace();
       }
-    } 
+    }
+    public static char recoveryProtocol(char[][] grid, int row, int col, double recRate) {
+        Random rand = new Random();
+		double k = rand.nextDouble();
+        //testing if the given point will recover 
+		if (recRate >= k) {
+			return 'R';
+		} else {
+			return 'I';
+		}
+	}
+	public static char infectionProtocol(char[][] grid, int row, int col, double infRate) {
+		Random rand = new Random();
+		//Looking at the chars of the point's niehgbors
+		char above = (row > 0) ? grid[row - 1][col] : 'n'; // 'n' indicates no neighbor above
+        char below = (row < grid.length - 1) ? grid[row + 1][col] : 'n'; // 'n' indicates no neighbor below
+        char left = (col > 0) ? grid[row][col - 1] : 'n'; // 'n' indicates no neighbor to the left
+        char right = (col < grid[0].length - 1) ? grid[row][col + 1] : 'n'; // 'n' indicates no neighbor to the right
+        
+        //Seeing how many neighbors are infected
+        int count = 0;
+        count += (above == 'I') ? 1 : 0;
+        count += (below == 'I') ? 1 : 0;
+        count += (left == 'I') ? 1 : 0;
+        count += (right == 'I') ? 1 : 0;
+        
+        //testing if the given point will become infected
+		double k = rand.nextDouble();
+		if (infRate*count >= k) {
+			return 'I';
+		} else {
+			return 'S';
+		}
+   }
 }
