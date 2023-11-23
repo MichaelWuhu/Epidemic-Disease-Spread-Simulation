@@ -48,13 +48,13 @@ public class DiseaseSpreadSimulation {
             β = sc.nextDouble();
         }
 
+        // creating the grid (2D array)
         int size = (int) Math.sqrt(N); //Size of the square array.
-
         char[][] epidemicGrid = new char[size][size];//Creates char grid with 'Math.sqrt(N)' rows and 'Math.sqrt(N)' columns
 
         for (int i = 0; i < size; i++) { // Instantiates every element in the epidemicGrid with 'S' 
             for (int j = 0; j < size; j++) {
-                epidemicGrid[i][j] = 'S';
+                epidemicGrid[i][j] = 'S'; // S stands for susceptible
             }
         }
 
@@ -218,6 +218,8 @@ public class DiseaseSpreadSimulation {
             outputGridInfo(epidemicGrid, T);
         }
     }
+
+    // outputGridInfo method will output information on the grid
     public static void outputGridInfo(char[][] grid, int timeStep) {	
     	// Tracking Numbers
     	int numInfected = 0;
