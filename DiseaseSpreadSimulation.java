@@ -48,6 +48,8 @@ public class DiseaseSpreadSimulation {
             β = sc.nextDouble();
         }
 
+
+        
         // creating the grid (2D array)
         int size = (int) Math.sqrt(N); //Size of the square array.
         char[][] epidemicGrid = new char[size][size];//Creates char grid with 'Math.sqrt(N)' rows and 'Math.sqrt(N)' columns
@@ -63,126 +65,25 @@ public class DiseaseSpreadSimulation {
 
         epidemicGrid[randRow][randCol] = 'I'; // instantiates the randomly chosen row and randomly chosen column with I, A.K.A. 'Patient Zero'
 
-        /*
-        for (int i = 0; i < size; i++) { // Prints out epidemic grid prior to any infections. This is only used for output testing. 
-            for (int j = 0; j < size; j++) {
-                System.out.print(epidemicGrid[i][j] + " ");
-            }
-            System.out.println();
-        }
-        */
         
-        //!!!THIS WILL BE THE INITIAL TIMESTEP (I don't know if this is necessary, so you can *delete it if you want.*)!!!
-        // This essentially just checks whether Patient Zero will initially infect other people or Recover, feel free to delete if you want.
-        if (randRow == 0) {
-            if (randCol == 0) { //Checks to see if patient zero is in upper left corner
-                if (rand.nextDouble(1) < α) {
-                    epidemicGrid[0][1] = 'I';
-                }
-                if (rand.nextDouble(1) < α) {
-                    epidemicGrid[1][0] = 'I';
-                }
-            }
-            else if (randCol == size-1) { // Checks to see if patient zero is in upper right corner
-                if (rand.nextDouble(1) < α) {
-                    epidemicGrid[0][size-2] = 'I';
-                }
-                if (rand.nextDouble(1) < α) {
-                    epidemicGrid[1][size-1] = 'I';
-                }
-            }
-            else {
-                if (rand.nextDouble(1) < α) {
-                    epidemicGrid[0][randCol-1] = 'I';
-                }
-                if (rand.nextDouble(1) < α) {
-                    epidemicGrid[0][randCol+1] = 'I';
-                }
-                if (rand.nextDouble(1) < α) {
-                    epidemicGrid[1][randCol] = 'I'; 
-                }
-            }
-        }
-        else if (randRow == size-1) {
-            if (randCol == 0) {
-                if (rand.nextDouble(1) < α) {
-                    epidemicGrid[0][1] = 'I';
-                }
-                if (rand.nextDouble(1) < α) {
-                    epidemicGrid[1][0] = 'I';
-                }
-            }
-            else if (randCol == size-1) {
-                if (rand.nextDouble(1) < α) {
-                    epidemicGrid[size-1][size-2] = 'I';
-                }
-                if (rand.nextDouble(1) < α) {
-                    epidemicGrid[size-2][size-1] = 'I';
-                }
-            }
-            else {
-                if (rand.nextDouble(1) < α) {
-                    epidemicGrid[size-1][randCol-1] = 'I';
-                }
-                if (rand.nextDouble(1) < α) {
-                    epidemicGrid[size-1][randCol+1] = 'I';
-                }
-                if (rand.nextDouble(1) < α) {
-                    epidemicGrid[size-2][randCol] = 'I'; 
-                }
-            }
-        }
-        else if (randCol == 0) {
-            if (rand.nextDouble(1) < α) {
-                    epidemicGrid[randRow-1][0] = 'I';
-                }
-            if (rand.nextDouble(1) < α) {
-                    epidemicGrid[randRow+1][0] = 'I';
-                }
-            if (rand.nextDouble(1) < α) {
-                    epidemicGrid[randRow][1] = 'I'; 
-                }
-        }
-        else if (randCol == size-1) {
-            if (rand.nextDouble(1) < α) {
-                    epidemicGrid[randRow-1][size-1] = 'I';
-                }
-            if (rand.nextDouble(1) < α) {
-                    epidemicGrid[randRow+1][size-1] = 'I';
-                }
-            if (rand.nextDouble(1) < α) {
-                    epidemicGrid[randRow][size-2] = 'I'; 
-                }
-        }
-        else {
-            if (rand.nextDouble(1) < α) {
-                    epidemicGrid[randRow-1][randCol] = 'I';
-                }
-            if (rand.nextDouble(1) < α) {
-                    epidemicGrid[randRow+1][randCol] = 'I';
-                }
-            if (rand.nextDouble(1) < α) {
-                    epidemicGrid[randRow][randCol-1] = 'I'; 
-                }
-            if (rand.nextDouble(1) < α) {
-                    epidemicGrid[randRow][randCol+1] = 'I'; 
-                }
-        }
+    
 
         if (rand.nextDouble(1) < β) {
-            epidemicGrid[randRow][randCol] = 'R';
+            epidemicGrid[randRow][randCol] = 'I'; // I means infected
         }
         System.out.println("\n\n\n");
 
-        System.out.println("Patient Zero is (" + randRow + ", " + randCol + ").");
+        System.out.println("Patient Zero is (" + randRow + ", " + randCol + ") Meaning row with index " + randRow + " and column with index " + randCol + ".");
+        System.out.println("Here is the initial grid.");
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 System.out.print(epidemicGrid[i][j] + " ");
             }
             System.out.println();
         }
+        System.out.println();
 
-        for (int h = 0; h < T; h++) {//each time step 
+        for (int h = 0; h < T; h++) { //each time step 
             char[][] tempArr = new char[size][size]; //temporary array to store changes and transfer to original after time step
             for (int a = 0; a < size; a++) {
                 for (int b = 0; b < size; b++) {
@@ -214,8 +115,16 @@ public class DiseaseSpreadSimulation {
                 }
             
             }
-            epidemicGrid = tempArr;
-            outputGridInfo(epidemicGrid, T);
+            // epidemicGrid = tempArr;
+
+            for(int i = 0; i < size; i++){
+                for(int j = 0; j < size; j++){
+                    epidemicGrid[i][j] = tempArr[i][j];
+                }
+            }
+
+            outputGridInfo(epidemicGrid, (h+1));
+            System.out.println();
         }
     }
 
@@ -229,7 +138,7 @@ public class DiseaseSpreadSimulation {
     	// Names for the file path
     	String folderName = "Epidemic";
     	String directoryPath = "C:/";
-    	String fileName = "TimeStep "+timeStep+".txt";
+    	String fileName = "TimeStep " + timeStep +".txt";
 
     	// Create the folder
     	File directory = new File("C:/", folderName);
