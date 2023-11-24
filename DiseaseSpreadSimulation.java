@@ -97,7 +97,7 @@ public class DiseaseSpreadSimulation {
                     }
 
                     else if (epidemicGrid[i][j] == 'I') {//check if current individual is 'I'
-                        if (rand.nextDouble() < β) {
+                        if (rand.nextDouble() <= β) {
                             tempArr[i][j] = 'R'; //changes status to R for individual if both above statesments are true
                         }
 
