@@ -49,10 +49,7 @@ public class DiseaseSpreadSimulation {
         }
 
 
-        //
-        //
-        //
-        //
+        
         // creating the grid (2D array)
         int size = (int) Math.sqrt(N); //Size of the square array.
         char[][] epidemicGrid = new char[size][size];//Creates char grid with 'Math.sqrt(N)' rows and 'Math.sqrt(N)' columns
@@ -69,102 +66,7 @@ public class DiseaseSpreadSimulation {
         epidemicGrid[randRow][randCol] = 'I'; // instantiates the randomly chosen row and randomly chosen column with I, A.K.A. 'Patient Zero'
 
         
-        //!!!THIS WILL BE THE INITIAL TIMESTEP (I don't know if this is necessary, so you can *delete it if you want.*)!!!
-        // This essentially just checks whether Patient Zero will initially infect other people or Recover, feel free to delete if you want.
-        // if (randRow == 0) {
-        //     if (randCol == 0) { //Checks to see if patient zero is in upper left corner
-        //         if (rand.nextDouble(1) < α) {
-        //             epidemicGrid[0][1] = 'I';
-        //         }
-        //         if (rand.nextDouble(1) < α) {
-        //             epidemicGrid[1][0] = 'I';
-        //         }
-        //     }
-        //     else if (randCol == size-1) { // Checks to see if patient zero is in upper right corner
-        //         if (rand.nextDouble(1) < α) {
-        //             epidemicGrid[0][size-2] = 'I';
-        //         }
-        //         if (rand.nextDouble(1) < α) {
-        //             epidemicGrid[1][size-1] = 'I';
-        //         }
-        //     }
-        //     else {
-        //         if (rand.nextDouble(1) < α) {
-        //             epidemicGrid[0][randCol-1] = 'I';
-        //         }
-        //         if (rand.nextDouble(1) < α) {
-        //             epidemicGrid[0][randCol+1] = 'I';
-        //         }
-        //         if (rand.nextDouble(1) < α) {
-        //             epidemicGrid[1][randCol] = 'I'; 
-        //         }
-        //     }
-        // }
-        // else if (randRow == size-1) {
-        //     if (randCol == 0) {
-        //         if (rand.nextDouble(1) < α) {
-        //             epidemicGrid[0][1] = 'I';
-        //         }
-        //         if (rand.nextDouble(1) < α) {
-        //             epidemicGrid[1][0] = 'I';
-        //         }
-        //     }
-        //     else if (randCol == size-1) {
-        //         if (rand.nextDouble(1) < α) {
-        //             epidemicGrid[size-1][size-2] = 'I';
-        //         }
-        //         if (rand.nextDouble(1) < α) {
-        //             epidemicGrid[size-2][size-1] = 'I';
-        //         }
-        //     }
-        //     else {
-        //         if (rand.nextDouble(1) < α) {
-        //             epidemicGrid[size-1][randCol-1] = 'I';
-        //         }
-        //         if (rand.nextDouble(1) < α) {
-        //             epidemicGrid[size-1][randCol+1] = 'I';
-        //         }
-        //         if (rand.nextDouble(1) < α) {
-        //             epidemicGrid[size-2][randCol] = 'I'; 
-        //         }
-        //     }
-        // }
-        // else if (randCol == 0) {
-        //     if (rand.nextDouble(1) < α) {
-        //             epidemicGrid[randRow-1][0] = 'I';
-        //         }
-        //     if (rand.nextDouble(1) < α) {
-        //             epidemicGrid[randRow+1][0] = 'I';
-        //         }
-        //     if (rand.nextDouble(1) < α) {
-        //             epidemicGrid[randRow][1] = 'I'; 
-        //         }
-        // }
-        // else if (randCol == size-1) {
-        //     if (rand.nextDouble(1) < α) {
-        //             epidemicGrid[randRow-1][size-1] = 'I';
-        //         }
-        //     if (rand.nextDouble(1) < α) {
-        //             epidemicGrid[randRow+1][size-1] = 'I';
-        //         }
-        //     if (rand.nextDouble(1) < α) {
-        //             epidemicGrid[randRow][size-2] = 'I'; 
-        //         }
-        // }
-        // else {
-        //     if (rand.nextDouble(1) < α) {
-        //             epidemicGrid[randRow-1][randCol] = 'I';
-        //         }
-        //     if (rand.nextDouble(1) < α) {
-        //             epidemicGrid[randRow+1][randCol] = 'I';
-        //         }
-        //     if (rand.nextDouble(1) < α) {
-        //             epidemicGrid[randRow][randCol-1] = 'I'; 
-        //         }
-        //     if (rand.nextDouble(1) < α) {
-        //             epidemicGrid[randRow][randCol+1] = 'I'; 
-        //         }
-        // }
+    
 
         if (rand.nextDouble(1) < β) {
             epidemicGrid[randRow][randCol] = 'I'; // I means infected
