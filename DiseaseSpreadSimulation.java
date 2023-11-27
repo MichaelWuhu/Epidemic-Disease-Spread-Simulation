@@ -6,6 +6,7 @@ import java.util.Scanner;
 import java.util.Random;
 
 public class DiseaseSpreadSimulation {
+	static String csvName = "epidemicData";
     static String folderName = "Epidemic";
 	static String directoryPath = "C:/";
 	static Random rand = new Random();
@@ -69,6 +70,29 @@ public class DiseaseSpreadSimulation {
 
         epidemicGrid[randRow][randCol] = 'I'; // instantiates the randomly chosen row and randomly chosen column with I,
                                               // A.K.A. 'Patient Zero'
+		
+		// Initializing the CSV file for data collection
+		String filePath = directoryPath + folderName +"/" + csvName + N + ".csv" ;
+		String[] header = {"Number Infected", "Number Recovered", "Number Susceptible", 
+				"Percent Infected", "Percent Recovered", "Percent Susceptible"
+				};
+		try {
+            // Create FileWriter in append mode (true parameter)
+            FileWriter fileWriter = new FileWriter(filePath, true);
+
+            // Append each element of rowData followed by a comma to the file
+            for (String data : header) {
+                fileWriter.append(data).append(",");
+            }
+
+            // Add a new line character at the end of the row
+            fileWriter.append("\n");
+            // Close the FileWriter
+            fileWriter.close();
+        } catch (IOException e) {
+            System.err.println("Error occurred while adding row to CSV file: " + e.getMessage());
+        }
+		
         System.out.println("\n\n\n");
 
         System.out.println("Patient Zero is (" + randRow + ", " + randCol + ") Meaning row with index " + randRow
@@ -219,4 +243,24 @@ public class DiseaseSpreadSimulation {
             e.printStackTrace();
         }
     }
+	public static void writeToCSV(String[] rowData, int N) {
+		String filePath = directoryPath + folderName +"/" + csvName + N + ".csv";
+		try {
+            // Create FileWriter in append mode (true parameter)
+            FileWriter fileWriter = new FileWriter(filePath, true);
+
+            // Append each element of rowData followed by a comma to the file
+            for (String data : rowData) {
+                fileWriter.append(data).append(",");
+            }
+
+            // Add a new line character at the end of the row
+            fileWriter.append("\n");
+
+            // Close the FileWriter
+            fileWriter.close();
+        } catch (IOException e) {
+            System.err.println("Error occurred while adding row to CSV file: " + e.getMessage());
+        }
+	}
 }
