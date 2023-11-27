@@ -1,11 +1,14 @@
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;  
 import java.io.IOException;
 import java.util.Scanner;
 import java.util.Random;
 
 public class DiseaseSpreadSimulation {
-
+    static String folderName = "Epidemic";
+	static String directoryPath = "C:/";
+	static Random rand = new Random();
     public static void main(String[] args) {
         // inputs needed:
         // Number of individuals (N) => (*N NEEDS TO BE PERFECT SQUARE)
@@ -15,7 +18,6 @@ public class DiseaseSpreadSimulation {
         // more than 1
         // Recover rate (β) => You should accept a value 0 ≤ β ≤ 1.
         Scanner sc = new Scanner(System.in);
-        Random rand = new Random();
 
         // taking in 'number of individuals' input
         System.out.println("Enter the number of individuals (this should be a perfect square): ");
@@ -48,12 +50,14 @@ public class DiseaseSpreadSimulation {
             System.out.println("Please enter a number between 0 and 1 (inclusive): ");
             β = sc.nextDouble();
         }
-
+        sc.close();
         // creating the grid (2D array)
         int size = (int) Math.sqrt(N); // Size of the square array.
         char[][] epidemicGrid = new char[size][size];// Creates char grid with 'Math.sqrt(N)' rows and 'Math.sqrt(N)'
                                                      // columns
 
+        char[][] previousGrid = new char[size][size];//Char grid to hold previous values
+        
         for (int i = 0; i < size; i++) { // Instantiates every element in the epidemicGrid with 'S'
             for (int j = 0; j < size; j++) {
                 epidemicGrid[i][j] = 'S'; // S stands for susceptible
@@ -65,75 +69,90 @@ public class DiseaseSpreadSimulation {
 
         epidemicGrid[randRow][randCol] = 'I'; // instantiates the randomly chosen row and randomly chosen column with I,
                                               // A.K.A. 'Patient Zero'
-
-        outputGridInfo(epidemicGrid, 0);
-
         System.out.println("\n\n\n");
 
         System.out.println("Patient Zero is (" + randRow + ", " + randCol + ") Meaning row with index " + randRow
                 + " and column with index " + randCol + ".");
         System.out.println("Here is the initial grid.");
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                System.out.print(epidemicGrid[i][j] + " ");
-            }
-            System.out.println();
-        }
-        System.out.println();
-
-        for (int h = 0; h < T; h++) { // each time step
-            char[][] tempArr = new char[size][size]; // temporary array to store changes and transfer to original after
-                                                     // time step
-            for (int a = 0; a < size; a++) {
-                for (int b = 0; b < size; b++) {
-                    tempArr[a][b] = epidemicGrid[a][b];
+        outputGridInfo(epidemicGrid, 0);
+        //Run thorugh the grid to see who recovers or gets infected
+        for (int time = 1; time <= T; ++time) { //Starts the infection and recovery protocols for each timestep 
+    		previousGrid = preGrid(previousGrid, time); // gets the previous grid
+    		for (int i = 0; i < previousGrid.length; i++) { // nested loop to iterate through indiviudal of the previous grid
+                for (int j = 0; j < previousGrid[i].length; j++) {
+                	if (previousGrid[i][j] == 'S') { //checks and changes thet status for each individual  
+                		epidemicGrid[i][j] = infectionProtocol(previousGrid, i, j, α);
+                	}
+                	if (previousGrid[i][j] == 'I') {
+                		epidemicGrid[i][j] = recoveryProtocol(previousGrid, i, j, β);
+                	}
                 }
             }
-            for (int i = 0; i < size; i++) {
-                for (int j = 0; j < size; j++) { // nested for loop to iterate through each individual in the
-                                                 // epidemicGrid
-                    if (epidemicGrid[i][j] == 'R') {// check if the current individual is recovered.
-                        continue;
-                    }
-
-                    else if (epidemicGrid[i][j] == 'I') {// check if current individual is 'I'
-                        if (rand.nextDouble() < β) {
-                            tempArr[i][j] = 'R'; // changes status to R for individual if both above statesments are
-                                                 // true
-                        }
-
-                    } else { // checking status of individuals at (row-1, col), (row+1, col), (row, col-1),
-                             // (row, col+1) where applicable (row/col – 1 must be >= 0 and row/col + 1 must
-                             // be < numRows/Cols)​​
-                        if (i - 1 >= 0 && epidemicGrid[i - 1][j] == 'I' && rand.nextDouble() < α) {
-                            tempArr[i][j] = 'I';
-                        }
-                        if (i + 1 < size && epidemicGrid[i + 1][j] == 'I' && rand.nextDouble() < α) {
-                            tempArr[i][j] = 'I';
-                        }
-                        if (j - 1 >= 0 && epidemicGrid[i][j - 1] == 'I' && rand.nextDouble() < α) {
-                            tempArr[i][j] = 'I';
-                        }
-                        if (j + 1 < size && epidemicGrid[i][j + 1] == 'I' && rand.nextDouble() < α) {
-                            tempArr[i][j] = 'I';
-                        }
-                    }
-                }
-
-            }
-            // epidemicGrid = tempArr;
-
-            for (int i = 0; i < size; i++) {
-                for (int j = 0; j < size; j++) {
-                    epidemicGrid[i][j] = tempArr[i][j];
-                }
-            }
-
-            outputGridInfo(epidemicGrid, (h + 1));
-            System.out.println();
+    		outputGridInfo(epidemicGrid, time); // outputs the time step's changes
         }
     }
-
+    public static char recoveryProtocol(char[][] grid, int row, int col, double recRate) {
+		double k = rand.nextDouble();
+		if (recRate >= k) {
+			return 'R';
+		} else {
+			return 'I';
+		}
+	}
+    
+	public static char infectionProtocol(char[][] grid, int row, int col, double infRate) {
+		
+		//Looking at the chars of the point's niehgbors
+		char above = (row > 0) ? grid[row - 1][col] : 'n'; // 'n' indicates no neighbor above
+        char below = (row < grid.length - 1) ? grid[row + 1][col] : 'n'; // 'n' indicates no neighbor below
+        char left = (col > 0) ? grid[row][col - 1] : 'n'; // 'n' indicates no neighbor to the left
+        char right = (col < grid[0].length - 1) ? grid[row][col + 1] : 'n'; // 'n' indicates no neighbor to the right
+        
+        //Seeing how many neighbors are infected
+        int count = 0;
+        count += (above == 'I') ? 1 : 0;
+        count += (below == 'I') ? 1 : 0;
+        count += (left == 'I') ? 1 : 0;
+        count += (right == 'I') ? 1 : 0;
+        
+        //testing if the given point will become infected
+		double k = rand.nextDouble();
+		if (infRate*count >= k) {
+			return 'I';
+		} else {
+			return 'S';
+		}
+	}
+    
+	//preGrid will return the grid of the previous timestep
+	public static char[][] preGrid(char[][] grid, int timeStep) {
+		//Defining FilePaths
+        String fileName = "TimeStep "+(timeStep-1)+".txt";
+        String filePath = directoryPath + folderName +"/" + fileName;
+        //Initialising scnaner and preGrid
+		Scanner scnr;
+		char[][] prevGrid = new char[grid.length][grid[0].length];
+		
+		try {
+			//Read previous step file
+			scnr = new Scanner(new File(filePath));
+			scnr.nextLine();
+			
+			//Fill in prevGrid with previous step
+			for (int i = 0; i < prevGrid.length; i++) {
+				String[] yes = scnr.nextLine().split(" ",0);
+				String no = String.join("",yes);
+				char[] replace = no.toCharArray();
+	            for (int j = 0; j < prevGrid[i].length && j < replace.length; j++) {
+	            	prevGrid[i][j] = replace[j];
+	            }
+	        }	
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return prevGrid;
+	}
     // outputGridInfo method will output information on the grid
     public static void outputGridInfo(char[][] grid, int timeStep) {
         // Tracking Numbers
@@ -142,12 +161,10 @@ public class DiseaseSpreadSimulation {
         int numSus = 0;
         int total = 0;
         // Names for the file path
-        String folderName = "Epidemic";
-        String directoryPath = "C:/";
         String fileName = "TimeStep " + timeStep + ".txt";
 
         // Create the folder
-        File directory = new File("C:/", folderName);
+        File directory = new File(directoryPath, folderName);
         directory.mkdirs();
 
         // Combine the directory path and file name to create the complete file path
@@ -193,7 +210,7 @@ public class DiseaseSpreadSimulation {
             System.out.printf("Percent Infected: %,.2f%%\n", (100.0) * ((double) numInfected / (double) total));
             System.out.printf("Percent Recovered: %,.2f%%\n", (100.0) * ((double) numRecovered / (double) total));
             System.out.printf("Percent Susceptible: %,.2f%%\n", (100.0) * ((double) numSus / (double) total));
-
+            System.out.println();
             // Close the FileWriter to release system resources
             writer.close();
         } catch (IOException e) {
