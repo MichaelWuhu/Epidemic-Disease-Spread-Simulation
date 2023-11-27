@@ -115,13 +115,14 @@ public class DiseaseSpreadSimulation {
         count += (left == 'I') ? 1 : 0;
         count += (right == 'I') ? 1 : 0;
         
-        //testing if the given point will become infected
-		double k = rand.nextDouble();
-		if (infRate*count >= k) {
-			return 'I';
-		} else {
-			return 'S';
-		}
+    	//testing if the given point will become infected
+        for (int i = 0; i < count; ++i) {
+        	double k = rand.nextDouble();
+    		if (infRate >= k) {
+    			return 'I';
+    		} 
+        }
+        return 'S';	
 	}
     
 	//preGrid will return the grid of the previous timestep
