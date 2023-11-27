@@ -73,7 +73,7 @@ public class DiseaseSpreadSimulation {
 		
 		// Initializing the CSV file for data collection
 		String filePath = directoryPath + folderName +"/" + csvName + N + ".csv" ;
-		String[] header = {"Number Infected", "Number Recovered", "Number Susceptible", 
+		String[] header = {"Time Step", "Infection Rate", "Recovery Rate", "Number Infected", "Number Recovered", "Number Susceptible", 
 				"Percent Infected", "Percent Recovered", "Percent Susceptible"
 				};
 		try {
@@ -98,7 +98,7 @@ public class DiseaseSpreadSimulation {
         System.out.println("Patient Zero is (" + randRow + ", " + randCol + ") Meaning row with index " + randRow
                 + " and column with index " + randCol + ".");
         System.out.println("Here is the initial grid.");
-        outputGridInfo(epidemicGrid, 0);
+        outputGridInfo(epidemicGrid, 0, α, β);
         //Run thorugh the grid to see who recovers or gets infected
         for (int time = 1; time <= T; ++time) { //Starts the infection and recovery protocols for each timestep 
     		previousGrid = preGrid(previousGrid, time); // gets the previous grid
@@ -112,7 +112,7 @@ public class DiseaseSpreadSimulation {
                 	}
                 }
             }
-    		outputGridInfo(epidemicGrid, time); // outputs the time step's changes
+    		outputGridInfo(epidemicGrid, time, α, β); // outputs the time step's changes
         }
     }
     public static char recoveryProtocol(char[][] grid, int row, int col, double recRate) {
@@ -179,7 +179,7 @@ public class DiseaseSpreadSimulation {
 		return prevGrid;
 	}
     // outputGridInfo method will output information on the grid
-    public static void outputGridInfo(char[][] grid, int timeStep) {
+    public static void outputGridInfo(char[][] grid, int timeStep, double infRate, double recRate) {
         // Tracking Numbers
         int numInfected = 0;
         int numRecovered = 0;
@@ -227,15 +227,28 @@ public class DiseaseSpreadSimulation {
             }
 
             total = numSus + numRecovered + numInfected;
-
+            double percentInf = (100.0)*((double)numInfected/(double)total);
+            double percentRec = (100.0)*((double)numRecovered/(double)total);
+            double percentSus = (100.0)*((double)numSus/(double)total);
+            
             // Prints some values
             System.out.println("Number Infected: " + numInfected);
             System.out.println("Number Recovered: " + numRecovered);
             System.out.println("Number Susceptible: " + numSus);
-            System.out.printf("Percent Infected: %,.2f%%\n", (100.0) * ((double) numInfected / (double) total));
-            System.out.printf("Percent Recovered: %,.2f%%\n", (100.0) * ((double) numRecovered / (double) total));
-            System.out.printf("Percent Susceptible: %,.2f%%\n", (100.0) * ((double) numSus / (double) total));
+            System.out.printf("Percent Infected: %,.2f%%\n", percentInf);
+            System.out.printf("Percent Recovered: %,.2f%%\n", percentRec);
+            System.out.printf("Percent Susceptible: %,.2f%%\n", percentSus);
             System.out.println();
+            
+            // create a String array of the data
+            String[] data = {Integer.toString(timeStep) ,Double.toString(infRate), Double.toString(recRate), 
+            		Integer.toString(numInfected), Integer.toString(numRecovered), Integer.toString(numSus), 
+            		Double.toString(percentInf), Double.toString(percentRec), Double.toString(percentSus)
+            };
+            
+            //Write data to CSV file
+            writeToCSV(data, total);
+            
             // Close the FileWriter to release system resources
             writer.close();
         } catch (IOException e) {
